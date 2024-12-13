@@ -14,7 +14,7 @@ export const createNewQuote = async (req, res) => {
 export const sortQuotes = async (req, res) => {
     const { limit, keyword } = req.params;
     
-    const [quotes] = await pool.query(`SELECT author, quote FROM quotes LIMIT ${limit === '0' ? 0 : (limit * 1)}; SELECT author, quote FROM quotes WHERE author LIKE '%${keyword}%'`);
+    const [quotes] = await pool.query(`SELECT author, quote FROM quotes LIMIT ${limit === '0' ? 0 : (limit * 1)}; SELECT author, quote FROM quotes WHERE author LIKE '%${keyword === '' ? '' : keyword}%'`);
     let quoteArr;
 
     if (quotes.length > 1) {
