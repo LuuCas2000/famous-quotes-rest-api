@@ -11,17 +11,20 @@ export const createNewQuote = async (req, res) => {
     res.status(201).json({ msg: 'new quote added' });
 };
 
-export const sortQuotes = async (req, res) => {
-    const { limit, keyword } = req.params;
+export const sortByLimit = async (req, res) => {
+    const { limit } = req.params;
+    const limitSort = limit * 1;
+    const [quotes] = await pool.query(`SELECT author, quote FROM quotes LIMIT ?`, [limitSort]);
+
+    res.status(200).json({ quotes: quotes });
+};
+
+export const sortByKeyword = async (req, res) => {
+    const { keyword } = req.params;
     
-    const [quotes] = await pool.query(`SELECT author, quote FROM quotes LIMIT ${limit === '0' ? 0 : (limit * 1)}; SELECT author, quote FROM quotes WHERE author LIKE '%${keyword === '' ? '' : keyword}%'`);
-    let quoteArr;
+    const [quotes] = await pool.query(`SELECT author, quote FROM quotes WHERE author LIKE '%${keyword}%'`);
 
-    if (quotes.length > 1) {
-        quoteArr = quotes[0].concat(quotes[1]);
-    };
-
-    res.status(200).json({ quotes: quoteArr });
+    res.status(200).json({ quotes });
 };
 
 export const deleteQuote = async (req, res) => {
